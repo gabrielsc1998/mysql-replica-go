@@ -1,0 +1,2 @@
+.docker/mysql/master/data/
+.docker/mysql/slave/data/

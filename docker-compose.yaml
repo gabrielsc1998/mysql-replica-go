@@ -1,0 +1,38 @@
+version: '3'
+
+services:
+  app:
+    build: .
+    volumes:
+      - .:/go/src
+
+  mysql_master:
+    image: mysql:8.0
+    container_name: "mysql_master"
+    ports:
+      - 3306:3306
+    env_file:
+      - ./.docker/mysql/master/.env
+    volumes:
+      - ./.docker/mysql/master/data:/var/lib/mysql
+      - ./.docker/mysql/master/conf/mysql.conf:/etc/mysql/conf.d/mysql.conf.cnf
+    networks:
+      - overlay
+
+  mysql_slave:
+    image: mysql:8.0
+    container_name: "mysql_slave"
+    ports:
+      - 3307:3306
+    env_file:
+      - ./.docker/mysql/slave/.env
+    volumes:
+      - ./.docker/mysql/slave/data:/var/lib/mysql
+      - ./.docker/mysql/slave/conf/mysql.conf:/etc/mysql/conf.d/mysql.conf.cnf
+    depends_on:
+      - mysql_master
+    networks:
+      - overlay
+
+networks:
+  overlay:
